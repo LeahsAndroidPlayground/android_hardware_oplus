@@ -134,8 +134,7 @@ class AlertSliderDialog(private var context: Context) :
             applyOnEnd(endX, endY, position)
         }
 
-        // FROM HERE
-        frameView.setBackgroundResource(backgroundFor(rotation, position, flip))
+        frameView.setBackgroundResource(backgroundFor(rotation, position, isLeft))
 
         iconView.setImageResource(
             when (ringerMode) {
@@ -161,7 +160,43 @@ class AlertSliderDialog(private var context: Context) :
             }
         )
         textView.setTextColor(context.getColor(R.color.alert_slider_text_color))
-        // TO HERE
+    }
+
+    private fun backgroundFor(rotation: Int, position: Int, flip: Boolean): Int {
+        fun base(position: Int): Int =
+            when (position) {
+                KeyHandler.POSITION_TOP ->
+                    if (flip) R.drawable.alert_slider_top_flip else R.drawable.alert_slider_top
+                KeyHandler.POSITION_MIDDLE -> R.drawable.alert_slider_middle
+                KeyHandler.POSITION_BOTTOM ->
+                    if (flip) R.drawable.alert_slider_bottom_flip
+                    else R.drawable.alert_slider_bottom
+                else -> R.drawable.alert_slider_middle
+            }
+
+        return when (rotation) {
+            Surface.ROTATION_90 ->
+                when (position) {
+                    KeyHandler.POSITION_TOP ->
+                        if (flip) R.drawable.alert_slider_top_90_flip
+                        else R.drawable.alert_slider_top_90
+                    KeyHandler.POSITION_BOTTOM ->
+                        if (flip) R.drawable.alert_slider_bottom_90_flip
+                        else R.drawable.alert_slider_bottom_90
+                    else -> R.drawable.alert_slider_middle
+                }
+            Surface.ROTATION_270 ->
+                when (position) {
+                    KeyHandler.POSITION_TOP ->
+                        if (flip) R.drawable.alert_slider_top_270_flip
+                        else R.drawable.alert_slider_top_270
+                    KeyHandler.POSITION_BOTTOM ->
+                        if (flip) R.drawable.alert_slider_bottom_270_flip
+                        else R.drawable.alert_slider_bottom_270
+                    else -> R.drawable.alert_slider_middle
+                }
+            else -> base(position) // ROTATION_0 / ROTATION_180
+        }
     }
 
     @Synchronized
